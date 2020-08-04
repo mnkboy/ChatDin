@@ -82,7 +82,7 @@ func CreateUser(idUsuario string, nickname string, password string, estado bool,
 		return "error", err
 	}
 
-	tsql := "INSERT INTO usuarios (idUsuario, nickname, password, estado, imagenPerfil) VALUES (@idUsuario, @nickname, @password , @estado , @imagenPerfil);"
+	tsql := "INSERT INTO usuario (idUsuario, nickname, password, estado, imagenPerfil) VALUES (@idUsuario, @nickname, @password , @estado , @imagenPerfil);"
 
 	stmt, err := db.Prepare(tsql)
 	if err != nil {
