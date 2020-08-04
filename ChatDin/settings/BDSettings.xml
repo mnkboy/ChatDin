@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DBSettings>
+  <DB name="ChatDin">
+    <Engine>Postgres</Engine>
+    <Server>localhost</Server>
+    <Port>5432</Port>
+    <User>postgres</User>
+    <Password>123456</Password>
+    <Database>ChatDin_DB</Database>
+    <SslMode>Disable</SslMode>
+  </DB>
+  <DB name="ChatDin">
+    <Engine>SQLServer</Engine>
+    <Server>localhost</Server>
+    <Port>5432</Port>
+    <User>postgres</User>
+    <Password>123456</Password>
+    <Database>ChatDin_DB</Database>
+    <SslMode>Disable</SslMode>
+  </DB>
