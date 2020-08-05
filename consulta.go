@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"database/sql"
-	"errors"
 	"fmt"
 	"log"
 
@@ -36,20 +35,14 @@ func main() {
 	}
 	fmt.Printf("Connected!\n")
 
-	// Create employee
-	createID, err := CreateUser("ccvvf", "usuario2", "12345", true, "./imagenes/fotoPerfil2.jpeg")
+	//Read usuarios
+	count, err := ReadUsuarios()
 	if err != nil {
-		log.Fatal("Error creating Employee: ", err.Error())
-	}
-	fmt.Printf("Inserted ID: %s successfully.\n", createID)
-
-	// Read employees
-	/*count, err := ReadEmployees()
-	if err != nil {
-		log.Fatal("Error reading Employees: ", err.Error())
+		log.Fatal("Error reading Usuarios: ", err.Error())
 	}
 	fmt.Printf("Read %d row(s) successfully.\n", count)
 
+<<<<<<< HEAD
 	// Update from database
 	updatedRows, err := UpdateEmployee("Jake", "Poland")
 	if err != nil {
@@ -106,10 +99,12 @@ func CreateUser(idUsuario string, nickname string, password string, estado bool,
 	}
 
 	return newidUsuario, nil
+=======
+>>>>>>> angelcasanovasprint1
 }
 
-// ReadEmployees reads all employee records
-func ReadEmployees() (int, error) {
+// ReadUsuarios reads all employee records
+func ReadUsuarios() (int, error) {
 	ctx := context.Background()
 
 	// Check if database is alive.
@@ -118,7 +113,7 @@ func ReadEmployees() (int, error) {
 		return -1, err
 	}
 
-	tsql := fmt.Sprintf("SELECT Id, Name, Location FROM TestSchema.Employees;")
+	tsql := fmt.Sprintf("SELECT idUsuario, nickname, password, estado, imagenPerfil FROM usuarios;")
 
 	// Execute query
 	rows, err := db.QueryContext(ctx, tsql)
@@ -132,64 +127,18 @@ func ReadEmployees() (int, error) {
 
 	// Iterate through the result set.
 	for rows.Next() {
-		var name, location string
-		var id int
+		var idUsuario, nickname, password, imagenPerfil string
+		var estado bool
 
 		// Get values from row.
-		err := rows.Scan(&id, &name, &location)
+		err := rows.Scan(&idUsuario, &nickname, &password, &estado, &imagenPerfil)
 		if err != nil {
 			return -1, err
 		}
 
-		fmt.Printf("ID: %d, Name: %s, Location: %s\n", id, name, location)
+		fmt.Printf("ID: %s, nickname: %s, Password: %s, Estado: %t, UbicacionFoto: %s \n", idUsuario, nickname, password, estado, imagenPerfil)
 		count++
 	}
 
 	return count, nil
-}
-
-// UpdateEmployee updates an employee's information
-func UpdateEmployee(name string, location string) (int64, error) {
-	ctx := context.Background()
-
-	// Check if database is alive.
-	err := db.PingContext(ctx)
-	if err != nil {
-		return -1, err
-	}
-
-	tsql := fmt.Sprintf("UPDATE TestSchema.Employees SET Location = @Location WHERE Name = @Name")
-
-	// Execute non-query with named parameters
-	result, err := db.ExecContext(
-		ctx,
-		tsql,
-		sql.Named("Location", location),
-		sql.Named("Name", name))
-	if err != nil {
-		return -1, err
-	}
-
-	return result.RowsAffected()
-}
-
-// DeleteEmployee deletes an employee from the database
-func DeleteEmployee(name string) (int64, error) {
-	ctx := context.Background()
-
-	// Check if database is alive.
-	err := db.PingContext(ctx)
-	if err != nil {
-		return -1, err
-	}
-
-	tsql := fmt.Sprintf("DELETE FROM TestSchema.Employees WHERE Name = @Name;")
-
-	// Execute non-query with named parameters
-	result, err := db.ExecContext(ctx, tsql, sql.Named("Name", name))
-	if err != nil {
-		return -1, err
-	}
-
-	return result.RowsAffected()
 }
