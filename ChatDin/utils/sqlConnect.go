@@ -16,11 +16,12 @@ var server = "localhost"
 var port = 1433
 var user = "SA"
 var password = "Server@2020"
-var database = "testdb"
+var database = "TESTDB"
 
 func main() {
 	// Build connection string
-	connString := fmt.Sprintf("server=%s;user id=%s;password=%s;port=%d;database=%s;", server, user, password, port, database)
+	connString := fmt.Sprintf("server=%s;user id=%s;password=%s;port=%d;database=%s;",
+		server, user, password, port, database)
 
 	var err error
 
@@ -37,14 +38,14 @@ func main() {
 	fmt.Printf("Connected!\n")
 
 	// Create employee
-	createID, err := CreateUser("ccvvf", "usuario2", "12345", true, "./imagenes/fotoPerfil2.jpeg")
+	createID, err := CreateEmployee("Jake", "United States")
 	if err != nil {
 		log.Fatal("Error creating Employee: ", err.Error())
 	}
-	fmt.Printf("Inserted ID: %s successfully.\n", createID)
+	fmt.Printf("Inserted ID: %d successfully.\n", createID)
 
 	// Read employees
-	/*count, err := ReadEmployees()
+	count, err := ReadEmployees()
 	if err != nil {
 		log.Fatal("Error reading Employees: ", err.Error())
 	}
@@ -63,49 +64,43 @@ func main() {
 		log.Fatal("Error deleting Employee: ", err.Error())
 	}
 	fmt.Printf("Deleted %d row(s) successfully.\n", deletedRows)
-	*/
 }
 
-// CreateUser inserts an usuarios record
-func CreateUser(idUsuario string, nickname string, password string, estado bool, imagenPerfil string) (string, error) {
+// CreateEmployee inserts an employee record
+func CreateEmployee(name string, location string) (int64, error) {
 	ctx := context.Background()
 	var err error
 
 	if db == nil {
-		err = errors.New("CreateUser: db is null")
-		return "error", err
+		err = errors.New("CreateEmployee: db is null")
+		return -1, err
 	}
 
 	// Check if database is alive.
 	err = db.PingContext(ctx)
 	if err != nil {
-		return "error", err
+		return -1, err
 	}
 
-	tsql := "INSERT INTO usuarios (idUsuario, nickname, password, estado, imagenPerfil) VALUES (@idUsuario, @nickname, @password , @estado , @imagenPerfil);"
+	tsql := "INSERT INTO TESTDB.dbo.Employees (Name, Location) VALUES (@Name, @Location); select convert(bigint, SCOPE_IDENTITY());"
 
 	stmt, err := db.Prepare(tsql)
 	if err != nil {
-		return "error", err
+		return -1, err
 	}
 	defer stmt.Close()
 
 	row := stmt.QueryRowContext(
 		ctx,
-		sql.Named("idUsuario", idUsuario),
-		sql.Named("nickname", nickname),
-		sql.Named("password", password),
-		sql.Named("estado", estado),
-		sql.Named("imagenPerfil", imagenPerfil))
-
-	var newidUsuario string
-
-	err = row.Scan(&newidUsuario)
+		sql.Named("Name", name),
+		sql.Named("Location", location))
+	var newID int64
+	err = row.Scan(&newID)
 	if err != nil {
-		return "error", err
+		return -1, err
 	}
 
-	return newidUsuario, nil
+	return newID, nil
 }
 
 // ReadEmployees reads all employee records
@@ -118,7 +113,7 @@ func ReadEmployees() (int, error) {
 		return -1, err
 	}
 
-	tsql := fmt.Sprintf("SELECT Id, Name, Location FROM TestSchema.Employees;")
+	tsql := fmt.Sprintf("SELECT Id, Name, Location FROM TestSchema.dbo.Employees;")
 
 	// Execute query
 	rows, err := db.QueryContext(ctx, tsql)
@@ -158,7 +153,7 @@ func UpdateEmployee(name string, location string) (int64, error) {
 		return -1, err
 	}
 
-	tsql := fmt.Sprintf("UPDATE TestSchema.Employees SET Location = @Location WHERE Name = @Name")
+	tsql := fmt.Sprintf("UPDATE TESTDB.dbo.Employees SET Location = @Location WHERE Name = @Name")
 
 	// Execute non-query with named parameters
 	result, err := db.ExecContext(
@@ -183,7 +178,7 @@ func DeleteEmployee(name string) (int64, error) {
 		return -1, err
 	}
 
-	tsql := fmt.Sprintf("DELETE FROM TestSchema.Employees WHERE Name = @Name;")
+	tsql := fmt.Sprintf("DELETE FROM TESTDB.dbo.Employees WHERE Name = @Name;")
 
 	// Execute non-query with named parameters
 	result, err := db.ExecContext(ctx, tsql, sql.Named("Name", name))
