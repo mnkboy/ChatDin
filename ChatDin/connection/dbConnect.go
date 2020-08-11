@@ -1,9 +1,9 @@
 package connection
 
 import (
-	"chatDin/models/settingsModels"
 	"encoding/xml"
 	"fmt"
+	"golangGraphQL/models/settingsModels"
 	"io/ioutil"
 	"os"
 
@@ -11,6 +11,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
+//OpenConnection : abrimos conexion a la base de datos
 func OpenConnection(database string) *gorm.DB {
 	//Abrimos archivo
 	xmlFile, err := os.Open("../settings/BDSettings.xml")
@@ -20,7 +21,7 @@ func OpenConnection(database string) *gorm.DB {
 		panic(err)
 	}
 
-	fmt.Println("Successfully opened BdSettings.xml")
+	fmt.Println("Archivo BdSettings.xml abierto exitosamente")
 
 	//Por defecto siempre cerramos el archivo
 	defer xmlFile.Close()
@@ -55,8 +56,6 @@ func OpenConnection(database string) *gorm.DB {
 		DBItem.SslMode,
 	)
 
-	strcon = strcon
-
 	//Abrimos una conexion a la base de datos
 	db, err := gorm.Open(DBItem.Engine, strcon)
 
@@ -66,6 +65,12 @@ func OpenConnection(database string) *gorm.DB {
 	} else {
 		fmt.Println("Conexion abierta exitosamente a base dedatos: " + DBItem.Name)
 	}
+
+	//Habilitamos el log de actividades
+	db.LogMode(true)
+
+	//Hacemos ping al servidor
+	db.DB().Ping()
 
 	//Creamos la extension para uuid
 	db.Exec("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";")

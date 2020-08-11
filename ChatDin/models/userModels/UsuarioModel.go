@@ -1,7 +1,7 @@
 package usermodels
 
-//UserAccessModel :
-type UserAccessModel struct {
+//UsuarioModel :
+type UsuarioModel struct {
 	IDUsuario     string `gorm:"primary_key;type:uuid;default:uuid_generate_v4()"`
 	CodigoAlterno string `gorm:"type:varchar(30)";`
 	NickName      string `gorm:"type:varchar(60)";`
@@ -11,6 +11,6 @@ type UserAccessModel struct {
 }
 
 //Cambiamos el nombre de la tabla a singular
-func (userAccess UserAccessModel) TableName() string {
-	return "useraccess"
+func (Usuario UsuarioModel) TableName() string {
+	return "usuario"
 }

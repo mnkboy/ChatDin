@@ -1,0 +1,17 @@
+schema {
+	query: Query
+}
+
+type Query {
+	hello(id: String!): String!
+	usuarios(ids: [String!]!): [UsuarioModel!]!
+}
+
+type UsuarioModel {
+	IDUsuario: String!
+	CodigoAlterno: String
+	NickName: String
+	Password: String
+	Estado: Boolean
+	ImagenPerfil: String
+}
