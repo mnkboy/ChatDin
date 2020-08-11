@@ -42,6 +42,13 @@ func main() {
 	}
 	fmt.Printf("Read %d row(s) successfully.\n", count)
 
+	//Read by usuarios
+	count2, err2 := ReadUsuariosById("dedewdwe")
+	if err2 != nil {
+		log.Fatal("Error reading Usuarios: ", err2.Error())
+	}
+	fmt.Printf("Read %d row(s) successfully.\n", count2)
+
 }
 
 // ReadUsuarios reads all employee records
@@ -55,6 +62,45 @@ func ReadUsuarios() (int, error) {
 	}
 
 	tsql := fmt.Sprintf("SELECT idUsuario, nickname, password, estado, imagenPerfil FROM usuarios;")
+
+	// Execute query
+	rows, err := db.QueryContext(ctx, tsql)
+	if err != nil {
+		return -1, err
+	}
+
+	defer rows.Close()
+
+	var count int
+
+	// Iterate through the result set.
+	for rows.Next() {
+		var idUsuario, nickname, password, imagenPerfil string
+		var estado bool
+
+		// Get values from row.
+		err := rows.Scan(&idUsuario, &nickname, &password, &estado, &imagenPerfil)
+		if err != nil {
+			return -1, err
+		}
+
+		fmt.Printf("ID: %s, nickname: %s, Password: %s, Estado: %t, UbicacionFoto: %s \n", idUsuario, nickname, password, estado, imagenPerfil)
+		count++
+	}
+
+	return count, nil
+}
+
+func ReadUsuariosById(id string) (int, error) {
+	ctx := context.Background()
+
+	// Check if database is alive.
+	err := db.PingContext(ctx)
+	if err != nil {
+		return -1, err
+	}
+
+	tsql := fmt.Sprintf("SELECT idUsuario, nickname, password, estado, imagenPerfil FROM usuarios where idUsuario=%s;", id)
 
 	// Execute query
 	rows, err := db.QueryContext(ctx, tsql)
