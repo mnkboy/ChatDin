@@ -1,48 +1,81 @@
 package main
 
 import (
-	"chatDin/models/settingsModels"
-	"encoding/xml"
 	"fmt"
-	"io/ioutil"
-	"os"
+	"golangGraphQL/connection"
+	"golangGraphQL/graphql/resolver"
+	"golangGraphQL/graphql/util"
+	"golangGraphQL/settings"
+	"log"
+	"net/http"
+
+	"github.com/graph-gophers/graphql-go"
+	"github.com/graph-gophers/graphql-go/relay"
 )
 
 func main() {
-	//Abrimos archivo
-	xmlFile, err := os.Open("../settings/BDSettings.xml")
+	//Pedimos una conexion a la base de datos POSTGRES
+	//db := connection.OpenConnection(settings.PostgresDB)
+	//pedimos conexion a la base de datos SQL server
+	dbSqlServer := connection.OpenConnection(settings.SqlServer)
 
-	//Verificamos que no existan errores
+	//Por defecto siempre la cerramos
+	defer dbSqlServer.Close()
+
+	s, err := util.GetSchema("../graphql/schema.graphql")
+
 	if err != nil {
-		panic(err)
+		log.Fatalf("Unable to read GraphQL schema: %s \n", err)
 	}
 
-	fmt.Println("Successfully opened BdSettings.xml")
+	var schema *graphql.Schema
+	schema = graphql.MustParseSchema(s, &resolver.Resolver{DB: db})
 
-	//Por defecto siempre cerramos el archivo
-	defer xmlFile.Close()
+	http.Handle("/", http.HandlerFunc(handler))
 
-	//Leemos en un byte array el contenido del archivo
-	dbSettingsByteArray, _ := ioutil.ReadAll(xmlFile)
+	http.Handle("/query", &relay.Handler{Schema: schema})
 
-	//Declaramos variables
-	var DBs settingsModels.DBSettingsModel
+	log.Fatal(http.ListenAndServe(":4000", nil))
 
-	//volcamos el contenido del byte array en las estructuras
-	xml.Unmarshal(dbSettingsByteArray, &DBs)
-
-	//Imprimimos las configuraciones
-	for _, dbItem := range DBs.DataBase {
-		fmt.Println("==============================")
-		fmt.Println("Name: " + dbItem.Name)
-		fmt.Println("Engine: " + dbItem.Engine)
-		fmt.Println("Server: " + dbItem.Server)
-		fmt.Println("Port: " + dbItem.Port)
-		fmt.Println("User: " + dbItem.User)
-		fmt.Println("Password: " + dbItem.Password)
-		fmt.Println("Database: " + dbItem.Database)
-		fmt.Println("SslMode: " + dbItem.SslMode)
-		fmt.Println("==============================")
-	}
-
+	fmt.Println(schema)
 }
+
+func handler(w http.ResponseWriter, r *http.Request) {
+	w.Write(page)
+}
+
+var page = []byte(`
+<!DOCTYPE html>
+<html>
+	<head>
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/graphiql/0.12.0/graphiql.min.css" rel="stylesheet" />
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/react/16.8.2/umd/react.production.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/16.8.2/umd/react-dom.production.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/graphiql/0.12.0/graphiql.min.js"></script>
+	</head>
+	<body style="width: 100%; height: 100%; margin: 0; overflow: hidden;">
+		<div id="graphiql" style="height: 100vh;">Loading...</div>
+		<script>
+			function graphQLFetcher(graphQLParams) {
+				return fetch("/query", {
+					method: "post",
+					body: JSON.stringify(graphQLParams),
+					credentials: "include",
+				}).then(function (response) {
+					return response.text();
+				}).then(function (responseBody) {
+					try {
+						return JSON.parse(responseBody);
+					} catch (error) {
+						return responseBody;
+					}
+				});
+			}
+			ReactDOM.render(
+				React.createElement(GraphiQL, {fetcher: graphQLFetcher}),
+				document.getElementById("graphiql")
+			);
+		</script>
+	</body>
+</html>
+`)
