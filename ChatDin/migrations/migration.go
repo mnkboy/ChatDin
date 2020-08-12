@@ -1,8 +1,8 @@
 package main
 
 import (
-	"golangGraphQL/connection"
-	"golangGraphQL/migrations/migratefunctions"
+	"chatDin/connection"
+	"chatDin/migrations/migratefunctions"
 )
 
 func main() {

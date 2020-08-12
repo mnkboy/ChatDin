@@ -2,7 +2,7 @@ package resolver
 
 import (
 	"fmt"
-	usermodels "golangGraphQL/models/userModels"
+	usermodels "chatDin/models/userModels"
 
 	"github.com/jinzhu/gorm"
 )

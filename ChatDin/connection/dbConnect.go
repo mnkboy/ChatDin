@@ -1,9 +1,9 @@
 package connection
 
 import (
+	"chatDin/models/settingsModels"
 	"encoding/xml"
 	"fmt"
-	"golangGraphQL/models/settingsModels"
 	"io/ioutil"
 	"os"
 

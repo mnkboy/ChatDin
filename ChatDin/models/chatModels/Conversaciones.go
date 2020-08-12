@@ -1,7 +1,7 @@
 package chatmodels
 
 import (
-	usermodels "golangGraphQL/models/userModels"
+	usermodels "chatDin/models/userModels"
 )
 
 //ConversacionesModel :
@@ -16,6 +16,7 @@ type ConversacionesModel struct {
 	SilenciarNotificaciones bool   `gorm:"type:varchar(300)";`
 	Leido                   bool   `gorm:"type:varchar(300)";`
 	Archivar                bool   `gorm:"type:varchar(300)";`
+	Tipo                    string `gorm:"type:varchar(30)";`
 }
 
 //Cambiamos el nombre de la tabla a singular

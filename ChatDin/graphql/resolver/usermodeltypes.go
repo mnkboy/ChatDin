@@ -1,7 +1,7 @@
 package resolver
 
 import (
-	usermodels "golangGraphQL/models/userModels"
+	usermodels "chatDin/models/userModels"
 )
 
 //============= UsuarioResolvers =============

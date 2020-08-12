@@ -1,7 +1,7 @@
 package migratefunctions
 
 import (
-	usermodels "golangGraphQL/models/userModels"
+	usermodels "chatDin/models/userModels"
 
 	"github.com/jinzhu/gorm"
 )

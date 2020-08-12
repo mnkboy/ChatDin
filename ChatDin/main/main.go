@@ -1,11 +1,11 @@
 package main
 
 import (
+	"chatDin/connection"
+	"chatDin/graphql/resolver"
+	"chatDin/graphql/util"
+	"chatDin/settings"
 	"fmt"
-	"golangGraphQL/connection"
-	"golangGraphQL/graphql/resolver"
-	"golangGraphQL/graphql/util"
-	"golangGraphQL/settings"
 	"log"
 	"net/http"
 
