@@ -14,13 +14,12 @@ import (
 )
 
 func main() {
+
 	//Pedimos una conexion a la base de datos POSTGRES
-	//db := connection.OpenConnection(settings.PostgresDB)
-	//pedimos conexion a la base de datos SQL server
-	dbSqlServer := connection.OpenConnection(settings.SqlServer)
+	db := connection.OpenConnection(settings.PostgresDB)
 
 	//Por defecto siempre la cerramos
-	defer dbSqlServer.Close()
+	defer db.Close()
 
 	s, err := util.GetSchema("../graphql/schema.graphql")
 

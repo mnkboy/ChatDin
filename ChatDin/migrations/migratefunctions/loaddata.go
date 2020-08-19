@@ -1,12 +1,24 @@
 package migratefunctions
 
 import (
+	"golangGraphQL/connection"
 	usermodels "golangGraphQL/models/userModels"
+	"golangGraphQL/settings"
 
 	"github.com/jinzhu/gorm"
 )
 
 func LoadData(db *gorm.DB) {
+	//Pedimos una conexion a la base de datos POSTGRES
+	dbSqlServer := connection.OpenConnection(settings.SqlServer)
+
+	//Por defecto siempre la cerramos
+	defer dbSqlServer.Close()
+
+	usr := usermodels.UsuarioModel{}
+
+	db.Find(&usr)
+
 	//Definimos los parametros del usuario
 	user := usermodels.UsuarioModel{
 		CodigoAlterno: "123456",

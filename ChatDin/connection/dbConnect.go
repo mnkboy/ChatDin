@@ -117,11 +117,11 @@ func OpenSQLSERVERConnection(database string) *gorm.DB {
 
 	//Creamos la cadena de conexion
 	strcon := fmt.Sprintf("sqlserver://%v:%v@%v:%v?database=%v",
+		DBItem.User,
+		DBItem.Password,
 		DBItem.Server,
 		DBItem.Port,
-		DBItem.User,
 		DBItem.Database,
-		DBItem.Password,
 	)
 
 	//Abrimos una conexion a la base de datos
@@ -131,7 +131,7 @@ func OpenSQLSERVERConnection(database string) *gorm.DB {
 	if err != nil {
 		panic(err)
 	} else {
-		fmt.Println("Conexion abierta exitosamente a base dedatos:  " + DBItem.Name)
+		fmt.Println("Conexion abierta exitosamente a base de datos SQL SERVER:  " + DBItem.Name)
 	}
 
 	//Habilitamos el log de actividades
