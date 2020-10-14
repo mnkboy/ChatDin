@@ -124,6 +124,8 @@ func OpenSQLSERVERConnection(database string) *gorm.DB {
 		DBItem.Database,
 	)
 
+	fmt.Println(strcon)
+
 	//Abrimos una conexion a la base de datos
 	db, err := gorm.Open(DBItem.Engine, strcon)
 

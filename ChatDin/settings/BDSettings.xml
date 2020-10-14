@@ -5,17 +5,17 @@
     <Server>localhost</Server>
     <Port>5432</Port>
     <User>postgres</User>
-    <Password>123456</Password>
-    <Database>ChatDin_DB</Database>
+    <Password>12345</Password>
+    <Database>chatDIN</Database>
     <SslMode>disable</SslMode>
   </DB>
   <DB name="ChatDinSQLServer">
     <Engine>mssql</Engine>
     <Server>localhost</Server>
-    <Port>1433</Port>
-    <User>SA</User>
-    <Password>Server@2020</Password>
-    <Database>TestDB</Database>
+    <Port>14334</Port>
+    <User>sa</User>
+    <Password>12345</Password>
+    <Database>DIN_INTRANET</Database>
     <SslMode>disable</SslMode>
   </DB>
   <DB name="ChatDinFirebird">

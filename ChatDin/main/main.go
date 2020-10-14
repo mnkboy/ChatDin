@@ -1,42 +1,37 @@
 package main
 
 import (
-	"fmt"
-	"golangGraphQL/connection"
-	"golangGraphQL/graphql/resolver"
-	"golangGraphQL/graphql/util"
-	"golangGraphQL/settings"
-	"log"
+	"golangGraphQL/migrations/migratefunctions"
 	"net/http"
-
-	"github.com/graph-gophers/graphql-go"
-	"github.com/graph-gophers/graphql-go/relay"
 )
 
 func main() {
 
 	//Pedimos una conexion a la base de datos POSTGRES
-	db := connection.OpenConnection(settings.PostgresDB)
+	//db := connection.OpenConnection(settings.PostgresDB)
+	//migratefunctions.DropTables(db)
+	//migratefunctions.CreateTables(db)
+	migratefunctions.ConsultaUsuarios()
 
-	//Por defecto siempre la cerramos
-	defer db.Close()
+	// //Por defecto siempre la cerramos
+	// defer db.Close()
 
-	s, err := util.GetSchema("../graphql/schema.graphql")
+	// s, err := util.GetSchema("../graphql/schema.graphql")
 
-	if err != nil {
-		log.Fatalf("Unable to read GraphQL schema: %s \n", err)
-	}
+	// if err != nil {
+	// 	log.Fatalf("Unable to read GraphQL schema: %s \n", err)
+	// }
 
-	var schema *graphql.Schema
-	schema = graphql.MustParseSchema(s, &resolver.Resolver{DB: db})
+	// var schema *graphql.Schema
+	// schema = graphql.MustParseSchema(s, &resolver.Resolver{DB: db})
 
-	http.Handle("/", http.HandlerFunc(handler))
+	// http.Handle("/", http.HandlerFunc(handler))
 
-	http.Handle("/query", &relay.Handler{Schema: schema})
+	// http.Handle("/query", &relay.Handler{Schema: schema})
 
-	log.Fatal(http.ListenAndServe(":4000", nil))
+	// log.Fatal(http.ListenAndServe(":4000", nil))
 
-	fmt.Println(schema)
+	// fmt.Println(schema)
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
